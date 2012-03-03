@@ -7,7 +7,7 @@
   "engines": {
     "node": ">= 0.3.6"
   },
-  "homepage": "https://github.com/seebees/simple-cloudwatch-js"
+  "homepage": "https://github.com/seebees/simple-cloudwatch-js",
   "scripts" : {
     "test" : "tap ./tests/test*"
   },
