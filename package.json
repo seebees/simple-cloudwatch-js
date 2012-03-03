@@ -1,0 +1,27 @@
+{
+  "name": "simple-cloudwatch",
+  "description": "a very simple way to push custom metrics into cloudwatch",
+  "version": "0.0.1",
+  "author": "ryan emery <seebees@gmail.com>",
+  "main": "./libs/index.js",
+  "engines": {
+    "node": ">= 0.3.6"
+  },
+  "homepage": "https://github.com/seebees/simple-cloudwatch-js"
+  "scripts" : {
+    "test" : "tap ./tests/test*"
+  },
+  "dependencies": {
+    "request": "2.9.x"
+  , "sax2json": "0.0.x"
+  },
+  "devDependencies": {
+    "tap" : "0.0.x",
+    "nock" : "0.7.x"
+  },
+  "repository": {
+    "type": "git",
+    
+    "url": "git://github.com/seebees/simple-cloudwatch.git"
+  }
+}
