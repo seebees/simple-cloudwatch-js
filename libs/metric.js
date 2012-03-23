@@ -291,7 +291,6 @@ function decorate(put, get, list, _metric) {
     if (typeof value === 'string') {
       _metric.start = value
     } else if (isDate(value)) {
-      console.log(value)
       _metric.start = ISODateString(value)
     } else {
       _metric.start = false
