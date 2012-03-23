@@ -37,7 +37,7 @@ test('test get to many results', function(t) {
           + '&Dimensions.member.4.Name=DriveLetter'
           + '&Dimensions.member.4.Value=C'
           + '&Signature=YYY')
-      .reply(200, "<ErrorResponse xmlns=\"http://monitoring.amazonaws.com/doc/2010-08-01/\">\n"
+      .reply(500, "<ErrorResponse xmlns=\"http://monitoring.amazonaws.com/doc/2010-08-01/\">\n"
                 + "  <Error>\n"
                 + "    <Type>Sender</Type>\n"
                 + "    <Code>InvalidParameterCombination</Code>\n"
@@ -63,7 +63,7 @@ test('test get to many results', function(t) {
                 , Drive: 'System'
                 , Host: 'Utility'
                 , DriveLetter: 'C'})
-    .get(function(err, reqid, obj) {
+    .get(function(err, obj) {
       console.log(err)
       console.log(obj)
       t.end()

@@ -80,9 +80,9 @@ test('test get', function(t) {
                 , Drive: 'System'
                 , Host: 'Utility'
                 , DriveLetter: 'C'})
-    .get(function(err, reqid, obj) {
+    .get(function(err, obj) {
       console.log(err)
-      console.log(obj.getmetricstatisticsresponse.getmetricstatisticsresult.datapoints)
+      console.log(obj)
       t.end()
     })
 })

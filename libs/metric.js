@@ -100,10 +100,21 @@ function newMetric(awskey, secret, host, protocol, namespace) {
                                     , host
                                     , namespace
                                     , metric)
-                // TODO wrap and only return data
-                , cb)
+                , makeResponse)
       } else {
         // TODO throw
+      }
+
+      function makeResponse(err, reqId, obj) {
+
+        if (err) {
+          return cb(err, reqId)
+        }
+
+        cb(err, obj
+                  .getmetricstatisticsresponse
+                  .getmetricstatisticsresult
+                  .datapoints)
       }
     }
 
