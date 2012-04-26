@@ -28,6 +28,11 @@ function newMetric(awskey, secret, host, protocol, namespace) {
                   , name        : name
                   , namespace   : namespace}
 
+
+    return decorate(put
+                  , get, list, _metric)
+
+    // base function.  Used to put a value onto a metric
     function put(value, op, cb) {
 
       if (typeof value !== 'number') {
@@ -74,6 +79,7 @@ function newMetric(awskey, secret, host, protocol, namespace) {
       return metric
     }
 
+    // just what it says, get values from CloudWatch
     function get(op, cb) {
       op = op || {}
       if (typeof op === 'function') {
@@ -102,8 +108,10 @@ function newMetric(awskey, secret, host, protocol, namespace) {
                                     , metric)
                 , makeResponse)
       } else {
-        // TODO throw
+        throw new Error('get requires a callback')
       }
+
+      return put
 
       function makeResponse(err, reqId, obj) {
 
@@ -111,13 +119,18 @@ function newMetric(awskey, secret, host, protocol, namespace) {
           return cb(err, reqId)
         }
 
-        cb(err, obj
+        var ret = obj
                   .getmetricstatisticsresponse
                   .getmetricstatisticsresult
-                  .datapoints)
+                  .datapoints
+                  .member
+
+        ret = ret || []
+        cb(err, ret)
       }
     }
 
+    // Helper to list out metrics.  In case you don't know
     function list(op, cb) {
       op = op || {}
       if (typeof op === 'function') {
@@ -129,14 +142,20 @@ function newMetric(awskey, secret, host, protocol, namespace) {
           name      : name
         , dimensions: op.dimensions || _metric.dimensions}
 
-      transport(host
-              , protocol
-              , listMetrics(awskey
-                          , secret
-                          , host
-                          , namespace
-                          , metric)
-              , makeList)
+      if (typeof cb === 'function') {
+        transport(host
+                , protocol
+                , listMetrics(awskey
+                            , secret
+                            , host
+                            , namespace
+                            , metric)
+                , makeList)
+      } else {
+        throw new Error('list requires a callback')
+      }
+
+      return put
 
       function makeList(err, reqId, obj) {
 
@@ -150,19 +169,21 @@ function newMetric(awskey, secret, host, protocol, namespace) {
                   .metrics
                   .member
                   .map(function(member) {
-                    return Metric(member.metricname)
-                            .dimensions(member.dimensions
-                                                .member)})
+                    member = Metric(member.metricname)
+                              .dimensions(member.dimensions
+                                                  .member)
+                    if (!op.raw) {
+                      return member
+                    } else {
+                      return member.conf()
+                    }
+                  })
 
         cb(err, obj)
       }
     }
-
-    return decorate(put
-                  , get, list, _metric)
   }
 }
-
 
 var validStatistics = {
         average     : 'Average'
@@ -199,6 +220,7 @@ var validStatistics = {
       , 'count/second'    :'Count/Second'
       , none              : 'None'}
 
+// Decorate the put fuction with some convenience methods
 function decorate(put, get, list, _metric) {
 
   put.unit        = unit
@@ -210,6 +232,8 @@ function decorate(put, get, list, _metric) {
   put.get         = get
   put.list        = list
   put.put         = put
+  put.conf        = conf
+  put.endByEvents = endByEvents
 
   return put
 
@@ -311,7 +335,26 @@ function decorate(put, get, list, _metric) {
     return put
   }
 
+  function endByEvents(eventsInPeriod, moveStartToEnd) {
+    if (moveStartToEnd && _metric.end) {
+      start(_metric.end)
+    } else {
+      // throw
+    }
+
+    if (!_metric.start) {
+      // throw
+    }
+
+    var newEnd = new Date(_metric.start)
+    newEnd.setSeconds(newEnd.getSeconds()
+                        + eventsInPeriod * _metric.period *  1440)
+    end(newEnd)
+
+    return put
+  }
+
   function conf() {
-    return Object.create(_metric)
+    return JSON.parse(JSON.stringify(_metric))
   }
 }
