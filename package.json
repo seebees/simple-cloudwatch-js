@@ -1,7 +1,7 @@
 {
   "name": "simple-cloudwatch",
   "description": "a very simple way to push custom metrics into cloudwatch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "ryan emery <seebees@gmail.com>",
   "main": "./libs/index.js",
   "engines": {
