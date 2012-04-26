@@ -66,7 +66,7 @@ function listMetrics(awskey, secret, host, namespace, metric) {
 
   // TODO throw if missing values
 
-  if (metric) {
+  if (metric && metric.name) {
     qs.MetricName   = metric.name
 
     if (metric.dimensions) {
