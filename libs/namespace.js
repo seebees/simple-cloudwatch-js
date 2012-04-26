@@ -61,39 +61,11 @@ function newNameSpace(awskey, secret, host, protocol) {
       }
     }
 
-    function list(cb) {
+    function list(op, cb) {
+      var ns = NameSpace(namespace)
+      ns.metric().list(op, cb)
 
-      if (typeof cb !== 'function') {
-        // throw
-      }
-
-      transport(host
-              , protocol
-              , listMetrics(awskey
-                          , secret
-                          , host
-                          , namespace)
-              , makeList)
-
-      function makeList(err, reqId, obj) {
-
-        if (err) {
-          cb(err, reqId, obj)
-        }
-
-        // TODO some kind of structure check
-        obj = obj.listmetricsresponse
-                  .listmetricsresult
-                  .metrics
-                  .member
-                  .map(function(member) {
-                    return NameSpace(namespace)
-                            .metric(member.metricname)
-                            .dimensions(member.dimensions
-                                                .member)})
-
-        cb(err, obj)
-      }
+      return ns
     }
   }
 
